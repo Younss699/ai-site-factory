@@ -1,5 +1,5 @@
 {
-  "name": "ai-site-factory",
+  "name": "ai-site-factory-js",
   "private": true,
   "version": "1.0.0",
   "scripts": {
@@ -9,10 +9,7 @@
   },
   "dependencies": {
     "next": "14.2.5",
-    "react": "18.3.1",
-    "react-dom": "18.3.1"
-  },
-  "devDependencies": {
-    "typescript": "5.4.5"
+    "react": "18.2.0",
+    "react-dom": "18.2.0"
   }
 }
