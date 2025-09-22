@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import Head from 'next/head';
 
 export default function Home() {
   const [idea, setIdea] = useState('Box de snacks healthy pour étudiants');
@@ -12,30 +13,26 @@ export default function Home() {
     setError(null); setLoading(true); setKit(null);
     try {
       const r = await fetch('/api/generate', { 
-        method: 'POST', 
-        headers: { 'Content-Type': 'application/json' }, 
-        body: JSON.stringify({ idea, audience, tone }) 
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ idea, audience, tone })
       });
       if (!r.ok) throw new Error(await r.text());
       const j = await r.json();
       setKit(j);
     } catch (e) {
       setError(e.message || 'Erreur inconnue');
-    } finally { 
-      setLoading(false); 
+    } finally {
+      setLoading(false);
     }
   }
 
   function download(name, content, mime) {
     const blob = new Blob([content], { type: mime });
     const url = URL.createObjectURL(blob);
-    const a = document.createElement('a'); 
-    a.href = url; 
-    a.download = name; 
-    document.body.appendChild(a); 
-    a.click(); 
-    a.remove(); 
-    URL.revokeObjectURL(url);
+    const a = document.createElement('a');
+    a.href = url; a.download = name; document.body.appendChild(a);
+    a.click(); a.remove(); URL.revokeObjectURL(url);
   }
 
   function downloadAll() {
@@ -43,17 +40,20 @@ export default function Home() {
     download(`${kit.brand}-landing.html`, kit.landingHTML, 'text/html');
     download(`${kit.brand}-logo.svg`, kit.logoSVG, 'image/svg+xml');
     download(`${kit.brand}-README.md`, kit.readme, 'text/markdown');
-    (kit.socialPosts || []).forEach((p, i) => 
+    (kit.socialPosts || []).forEach((p, i) =>
       download(`${kit.brand}-post-${i + 1}.txt`, p, 'text/plain')
     );
   }
 
   return (
     <div style={{ minHeight: '100vh', background: 'linear-gradient(120deg,#f8fafc,#ffffff)', padding: '40px 16px' }}>
-      <link rel="preconnect" href="https://fonts.googleapis.com"/>
-      <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous"/>
-      <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&family=Inter:wght@400;600&display=swap" rel="stylesheet"/>
-      
+      <Head>
+        <link rel="preconnect" href="https://fonts.googleapis.com"/>
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous"/>
+        <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&family=Inter:wght@400;600&display=swap" rel="stylesheet"/>
+        <title>AI Site Factory</title>
+      </Head>
+
       <div style={{ maxWidth: 980, margin: '0 auto', background: '#fff', border: '1px solid #e5e7eb', borderRadius: 16, boxShadow: '0 10px 30px rgba(0,0,0,.04)', padding: 24 }}>
         <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <div>
@@ -92,7 +92,7 @@ export default function Home() {
           {kit && (
             <section style={{ marginTop: 12 }}>
               <div style={{ border: '1px solid #e5e7eb', borderRadius: 12, padding: 12 }}>
-                {/* Logo + slogan seulement */}
+                {/* Logo généré + slogan (pas de titre en double) */}
                 <div dangerouslySetInnerHTML={{ __html: kit.logoSVG }} style={{ width: 220, marginBottom: 8 }} />
                 <p style={{ color: '#475569' }}>{kit.oneLiner}</p>
               </div>
